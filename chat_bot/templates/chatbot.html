@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fff;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .chat-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 5);
+        }
+
+        .chat-header {
+            background-color: #142a4f;
+            color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .chat-body {
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 15px;
+        }
+
+        .user-message {
+            background-color: #142a4f;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 70%;
+        }
+
+        .bot-message {
+            background-color: #eaeaea;
+            color: #142a4f;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 70%;
+            align-self: flex-end;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-top: 1px solid #eaeaea;
+        }
+
+        .input-message {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .send-button {
+            background-color: #142a4f;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        CHAT - BOT
+    </div>
+    <form class="message-form">
+        {% csrf_token %}
+        <div class="chat-body message-list">
+           
+            <li>
+                <div class="message user-message">
+                    Hello! How can I help you today?
+                    Hi there! I'm here to assist you.
+                </div>
+            </li>
+           
+        </div>
+        <div class="input-container">
+            <input type="text" class="input-message" placeholder="Type your message...">
+            <button type="submit" class="send-button">Send</button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+  const message_list = document.querySelector('.message-list');
+  const message_form = document.querySelector('.message-form');
+  const message_input = document.querySelector('.input-message');
+  
+  message_form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const message = message_input.value.trim();
+    if(message.length === 0){
+        return;
+    }
+
+    const message_item = document.createElement('li');
+    message_item.classList.add('message', 'sent');
+    message_item.innerHTML = `
+    <div class="message bot-message">
+        ${message}
+     </div>`;
+     message_list.appendChild(message_item);
+     message_input.value = '';
+
+
+     // ...
+
+fetch('', {
+    method: 'post',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'message': message
+    })
+})
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Check if data is a valid JSON object
+        if (typeof data === 'object' && data.response) {
+            const response = data.response;
+            const message_item = document.createElement('li');
+            message_item.classList.add('message', 'sent');
+            message_item.innerHTML = `
+            <div class="message bot-message">
+                ${response}
+            </div>`;
+            message_list.appendChild(message_item);
+            message_input.value = '';
+        } else {
+            // Handle the case where the response is not valid JSON
+            console.error('Invalid JSON response from the server');
+        }
+    })
+    .catch(error => {
+        console.error('Error during fetch:', error);
+    });
+
+// ...
+
+  });
+
+
+</script>
+
+</body>
+</html>
