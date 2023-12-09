@@ -9,7 +9,10 @@
             background-color: #fff;
             font-family: 'Poppins', sans-serif;
         }
-
+        
+        a{
+          color: #fff;
+        }
         .chat-container {
             max-width: 400px;
             margin: 50px auto;
@@ -83,9 +86,13 @@
 <body>
 
 <div class="chat-container">
-    <div class="chat-header">
-        CHAT - BOT
-    </div>
+    <div class="chat-header"> CHAT - BOT </div>
+    {% if user.is_authenticated %}
+    <div class="chat-header"> Welcome {{ user.username }} </div>
+    <div class="chat-header"> <a href="logout"> Logout </a> </div>
+    {% else %}
+    <div class="chat-header"> <a href="login"> LOGIN </a>  <a href="signup"> SIGN UP</a> </div>
+    {% endif %}
     <form class="message-form">
         {% csrf_token %}
         <div class="chat-body message-list">
