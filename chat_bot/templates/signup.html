@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block styles %}
+<style>
+          @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+* {
+	box-sizing: border-box;
+}
+
+.body {
+	background: #f6f5f7;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position: relative;
+	align-items: center;
+	font-family: 'Montserrat', sans-serif;
+	height: 100vh;
+	margin: -20px 0 50px;
+	margin-bottom: 0%;
+}
+
+	
+
+h1 {
+	font-weight: bold;
+	margin : 0;
+}
+
+h2 {
+	text-align: center;
+}
+
+p {
+	font-size: 14px;
+	font-weight: 100;
+	line-height: 20px;
+	letter-spacing: 0.5px;
+	margin: 20px 0 30px;
+}
+
+span {
+	font-size: 12px;
+}
+
+a {
+	color: #333;
+	font-size: 14px;
+	text-decoration: none;
+	margin: 15px 0;
+}
+
+button {
+	border-radius: 20px;
+	border: 1px solid #1b2840;
+	background-color: #1b2840;
+	color: #FFFFFF;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 12px 45px;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	transition: transform 80ms ease-in;
+}
+
+button:active {
+	transform: scale(0.95);
+}
+
+button:focus {
+	outline: none;
+}
+
+form {
+	background-color: #FFFFFF;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	padding: 0 50px;
+	height: 100%;
+	text-align: center;
+}
+
+input {
+	background-color: #eee;
+	border: none;
+	padding: 12px 15px;
+	margin: 8px 0;
+	width: 100%;
+}
+
+.center{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+}
+
+.container1 {
+	background-color: #fff;
+	border-radius: 10px;
+  	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
+			0 10px 10px rgba(0,0,0,0.22);
+	position: relative;
+	overflow: hidden;
+	width: 350px;
+	margin-top: 0%;
+	max-width: 100%;
+	min-height: 480px;
+}
+
+  .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="body">
+    
+  {% if error_message %}
+    <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+  {% endif %}
+  <div class="container1">
+    <form name="myform" method="post">
+        {% csrf_token %}
+        <h1 style="text-align: center;">SIGNUP</h1> <br />
+        <input type="text" placeholder="Name" name="name" required="" />
+        <input type="text" placeholder="Username" name="username" required="" />
+        <input type="email" placeholder="Email" name="email" required="" />
+        <input type="password" placeholder="Password" name="password1" required="" 
+             />
+        <input type="password" placeholder="Re-Enter-Password" name="password2" required="" 
+             />
+        <br />
+        <div class="center">
+            <button type="submit"> Sign up </button>
+        </div>
+    </form>
+ </div>
+</div>
+{% endblock %}

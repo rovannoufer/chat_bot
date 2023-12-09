@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatBot</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #fff;
@@ -93,7 +92,7 @@
            
             <li>
                 <div class="message user-message">
-                    Hello! How can I help you today?
+                    Hello {{ user.username }} ! How can I help you today?
                     Hi there! I'm here to assist you.
                 </div>
             </li>
@@ -106,73 +105,57 @@
     </form>
 </div>
 
-
 <script>
-  const message_list = document.querySelector('.message-list');
-  const message_form = document.querySelector('.message-form');
-  const message_input = document.querySelector('.input-message');
+    document.addEventListener('DOMContentLoaded', function() {
+      const messageList = document.querySelector('.message-list');
+      const messageForm = document.querySelector('.message-form');
+      const messageInput = document.querySelector('.input-message');
   
-  message_form.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    const message = message_input.value.trim();
-    if(message.length === 0){
-        return;
-    }
-
-    const message_item = document.createElement('li');
-    message_item.classList.add('message', 'sent');
-    message_item.innerHTML = `
-    <div class="message bot-message">
-        ${message}
-     </div>`;
-     message_list.appendChild(message_item);
-     message_input.value = '';
-
-
-     // ...
-
-fetch('', {
-    method: 'post',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        'message': message
-    })
-})
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+      messageForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+  
+        const userMessage = messageInput.value.trim();
+        if (userMessage.length === 0) {
+          return;
         }
-        return response.json();
-    })
-    .then(data => {
-        // Check if data is a valid JSON object
-        if (typeof data === 'object' && data.response) {
-            const response = data.response;
-            const message_item = document.createElement('li');
-            message_item.classList.add('message', 'sent');
-            message_item.innerHTML = `
-            <div class="message bot-message">
-                ${response}
-            </div>`;
-            message_list.appendChild(message_item);
-            message_input.value = '';
-        } else {
-            // Handle the case where the response is not valid JSON
-            console.error('Invalid JSON response from the server');
-        }
-    })
-    .catch(error => {
-        console.error('Error during fetch:', error);
+  
+        displayMessage('user', userMessage);
+  
+        fetch('', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+          },
+          body: new URLSearchParams({
+            'message': userMessage,
+          }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            const botResponse = data.response;
+         
+            displayMessage('bot', botResponse);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          
+          });
+  
+        messageInput.value = '';
+      });
+  
+      function displayMessage(sender, text) {
+        const messageItem = document.createElement('li');
+        messageItem.classList.add('message', sender + '-message');
+        messageItem.innerHTML = `<div class="message">${text}</div>`;
+        messageList.appendChild(messageItem);
+  
+        messageList.scrollTop = messageList.scrollHeight;
+      }
     });
-
-// ...
-
-  });
-
-
-</script>
+  </script>
+  
 
 </body>
 </html>
