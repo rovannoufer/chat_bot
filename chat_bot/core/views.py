@@ -3,9 +3,10 @@ from django.http import JsonResponse
 import openai
 from django.contrib import auth
 from django.contrib.auth.models import User
-import json
+from .models import Chat
+from django.utils import timezone
 
-openai.api_key = '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'
+openai.api_key = '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'
 
 def ask_openai(message):
     response = openai.Completion.create(
@@ -17,15 +18,20 @@ def ask_openai(message):
         temperature=0.7
     )
    
+    print(response)
     answer = response.choices[0].text.strip()
     return answer
 
 def chatbot(request):
+    chats = Chat.objects.filter(user = request.user)
     if request.method == 'POST':
         message = request.POST.get('message')
         response = ask_openai(message)
+
+        chat = Chat(user = request.user, message = message, response = response, created_at = timezone.now())
+        chat.save()
         return JsonResponse({'message': message, 'response': response})
-    return render(request, 'chatbot.html')
+    return render(request, 'chatbot.html', {'chats':chats})
 
 
 
